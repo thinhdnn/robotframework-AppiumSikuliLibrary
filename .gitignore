@@ -10,3 +10,7 @@ teste
 .settings/
 pom.xml
 build/
+src/robotframework_AppiumSikuliLibrary.egg-info/dependency_links.txt
+src/robotframework_AppiumSikuliLibrary.egg-info/PKG-INFO
+src/robotframework_AppiumSikuliLibrary.egg-info/SOURCES.txt
+src/robotframework_AppiumSikuliLibrary.egg-info/top_level.txt

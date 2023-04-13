@@ -1,17 +1,17 @@
 '''
 Created on 2015/12/10
 
-Author: by wang_yang1980@hotmail.com
+Origin Author: by wang_yang1980@hotmail.com
 '''
 from setuptools import setup
 
 from os.path import abspath, dirname, join
 with open(join(dirname(abspath(__file__)), 'target', 'src', 'AppiumSikuliLibrary', 'version.py')) as f:
-    exec(f.read())
+      exec(f.read())
 
 
 DESCRIPTION = """
-Sikuli Robot Framework Library provide keywords for Robot Framework to test UI through Sikuli.
+Appium - Sikuli Robot Framework Library provide keywords for Robot Framework to test UI through Sikuli.
 
 Notes: SikuliLibrary.jar file is OS dependent. The version for Windows 64bit is included.
 If target OS is not Windows, please get source code from GITHUB, and use Maven to build
@@ -26,11 +26,11 @@ Topic :: Software Development :: Testing
 
 setup(name         = 'robotframework-AppiumSikuliLibrary',
       version      = VERSION,
-      description  = 'Sikuli library for Robot Framework',
+      description  = 'Appium - Sikuli library for Robot Framework',
       long_description = DESCRIPTION,
-      author       = 'Wang Yang',
-      author_email = 'wang_yang1980@hotmail.com',
-      url          = 'https://github.com/rainmanwy/robotframework-SikuliLibrary',
+      author       = 'Thinh Nguyen',
+      author_email = 'nguyenvanthinh.dnn@gmail.com',
+      url          = 'https://github.com/thinhntt/robotframework-AppiumSikuliLibrary',
       license      = 'Apache License 2.0',
       keywords     = 'robotframework testing testautomation sikuli UI',
       platforms    = 'any',
