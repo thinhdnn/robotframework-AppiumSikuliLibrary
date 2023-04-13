@@ -31,7 +31,7 @@ except ImportError:
     pass
 
 
-class SikuliLibrary(object):
+class AppiumSikuliLibrary(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = VERSION
 
@@ -130,7 +130,7 @@ class SikuliLibrary(object):
         handler = logging.StreamHandler(sys.stdout)
         formatter = logging.Formatter('%(message)s')
         handler.setFormatter(formatter)
-        logger = logging.getLogger('SikuliLibraryLogger')
+        logger = logging.getLogger('AppiumSikuliLibraryLogger')
         logger.addHandler(handler)
         level = logging.DEBUG
         try:
@@ -241,7 +241,7 @@ class SikuliLibrary(object):
         if name == 'start_sikuli_process':
             return self.start_sikuli_process.__doc__
         elif name == '__intro__':
-            return SikuliLibrary.__doc__
+            return AppiumSikuliLibrary.__doc__
         elif name == '__init__':
             return getattr(self, name).__doc__
         if self.mode == 'CREATE':

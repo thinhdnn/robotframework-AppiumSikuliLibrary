@@ -6,7 +6,7 @@ Author: by wang_yang1980@hotmail.com
 from setuptools import setup
 
 from os.path import abspath, dirname, join
-with open(join(dirname(abspath(__file__)), 'target', 'src', 'SikuliLibrary', 'version.py')) as f:
+with open(join(dirname(abspath(__file__)), 'target', 'src', 'AppiumSikuliLibrary', 'version.py')) as f:
     exec(f.read())
 
 
@@ -24,7 +24,7 @@ Programming Language :: Java
 Topic :: Software Development :: Testing
 """[1:-1]
 
-setup(name         = 'robotframework-SikuliLibrary',
+setup(name         = 'robotframework-AppiumSikuliLibrary',
       version      = VERSION,
       description  = 'Sikuli library for Robot Framework',
       long_description = DESCRIPTION,
@@ -36,7 +36,7 @@ setup(name         = 'robotframework-SikuliLibrary',
       platforms    = 'any',
       classifiers  = CLASSIFIERS.splitlines(),
       package_dir  = {'' : 'target/src'},
-      packages     = ['SikuliLibrary'],
-      package_data = {'SikuliLibrary': ['lib/*.jar',
+      packages     = ['AppiumSikuliLibrary'],
+      package_data = {'AppiumSikuliLibrary': ['lib/*.jar',
                                           ]},
       )

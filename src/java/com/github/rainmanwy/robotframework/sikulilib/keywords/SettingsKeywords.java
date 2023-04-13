@@ -4,6 +4,7 @@ import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
 import org.sikuli.basics.Settings;
+import org.sikuli.script.OCR;
 
 
 /**
@@ -81,5 +82,40 @@ public class SettingsKeywords {
     @ArgumentNames({"resize"})
     public void setAlwaysResize(float resize) {
         Settings.AlwaysResize = resize;
+    }
+
+    @RobotKeyword("Set Light Font"
+            + "\nTurn on OCR Light Font Option"
+    )
+    public void setLightFont() {
+        OCR.globalOptions().lightFont();
+    }
+
+    @RobotKeyword("Set Gray Font"
+            + "\nTurn on OCR Gray Font Option"
+    )
+    public void setGrayFont() {
+        OCR.globalOptions().grayFont();
+    }
+
+    @RobotKeyword("Set Small Font"
+            + "\nSet Small Font Option"
+    )
+    public void setSmallFont() {
+        OCR.globalOptions().smallFont();
+    }
+
+    @RobotKeyword("Reset OCR Setting"
+            + "\nSet Reset Font Setting"
+    )
+    public void resetOCRSetting() {
+        OCR.globalOptions().reset();
+    }
+
+    @RobotKeyword("Reset Font Setting"
+            + "\nSet Reset Font Setting"
+    )
+    public void resetFontSetting() {
+        OCR.globalOptions().resetFontSetting();
     }
 }

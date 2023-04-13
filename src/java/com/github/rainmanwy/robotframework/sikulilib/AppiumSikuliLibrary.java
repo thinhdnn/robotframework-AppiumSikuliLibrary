@@ -13,20 +13,20 @@ import java.util.Map;
 /**
  * Created by Wang Yang on 2015/8/19.
  */
-public class SikuliLibrary implements KeywordDocumentationRepository, RobotFrameworkDynamicAPI {
+public class AppiumSikuliLibrary implements KeywordDocumentationRepository, RobotFrameworkDynamicAPI {
 
     private final AnnotationLibrary annotationLibrary = new AnnotationLibrary("com/github/rainmanwy/robotframework/sikulilib/keywords/**/*.class");
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            throw new RuntimeException("Port number should be provided");
+            args = new String[]{"9991", "/"};
         }
         if (args.length >= 2) {
             CaptureFolder.getInstance().setCaptureFolder(args[1]);
         }
         RemoteServer.configureLogging();
         RemoteServer server = new RemoteServer(Integer.parseInt(args[0]));
-        server.putLibrary("/", new SikuliLibrary());
+        server.putLibrary("/", new AppiumSikuliLibrary());
         server.start();
     }
 

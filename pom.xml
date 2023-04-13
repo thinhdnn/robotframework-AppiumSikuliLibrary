@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.rainmanwy.robotframework</groupId>
-    <artifactId>robotframework-SikuliLibrary</artifactId>
+    <artifactId>robotframework-AppiumSikuliLibrary</artifactId>
     <version>2.0</version>
     <packaging>jar</packaging>
-    <name>robotframework-SikuliLibrary</name>
+    <name>robotframework-AppiumSikuliLibrary</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.sikulix</groupId>
             <artifactId>sikulixapi</artifactId>
-            <version>2.0.5</version>
+            <version>2.0.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.robotframework</groupId>
@@ -68,7 +68,28 @@
             <artifactId>jrobotremoteserver</artifactId>
             <version>4.1.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>8.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.8.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-codec -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.1.89.Final</version>
+        </dependency>
 
     </dependencies>
 
@@ -92,14 +113,14 @@
                 <version>3.3.0</version>
                 <configuration>
                     <!--descriptor>package.xml</descriptor-->
-                    <finalName>SikuliLibrary</finalName>
+                    <finalName>AppiumSikuliLibrary</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.rainmanwy.robotframework.sikulilib.SikuliLibrary</mainClass>
+                            <mainClass>com.github.rainmanwy.robotframework.sikulilib.AppiumSikuliLibrary</mainClass>
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
@@ -138,10 +159,10 @@
                         <configuration>
                             <tasks>
                                 <echo message="unzip package"/>
-                                <unzip src="target/SikuliLibrary.zip" dest="target/src"/>
+                                <unzip src="target/AppiumSikuliLibrary.zip" dest="target/src"/>
                                 <echo message="generate keywords.py"/>
                                 <exec dir="target/src" executable="python" failonerror="true">
-                                    <arg line="-m SikuliLibrary.__init__"/>
+                                    <arg line="-m AppiumSikuliLibrary.__init__"/>
                                 </exec>
                                 <!--<unzip src="output/inner.zip" dest="output" />-->
                                 <!--<unzip dest="output">-->

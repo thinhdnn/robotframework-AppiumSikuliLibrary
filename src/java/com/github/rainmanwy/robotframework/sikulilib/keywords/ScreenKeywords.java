@@ -257,9 +257,10 @@ public class ScreenKeywords {
             region.doubleClick(getPattern(image));
         }
         catch (FindFailed e) {
-            throw new ScreenOperationException("Click "+image+" failed"+e.getMessage(), e);
+            throw new ScreenOperationException("Click "+ image +" failed "+e.getMessage(), e);
         }
         Match match = region.getLastMatch();
+
         return regionFromMatch(match);
     }
 

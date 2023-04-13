@@ -4,11 +4,11 @@ Created on 2015-08-20
 @author: wang_yang1980@hotmail.com
 """
 
-from .sikuli import SikuliLibrary
+from .sikuli import AppiumSikuliLibrary
 
 
 def main():
-    lib = SikuliLibrary(mode='CREATE')
+    lib = AppiumSikuliLibrary(mode='CREATE')
 
 
 if __name__ == '__main__':
