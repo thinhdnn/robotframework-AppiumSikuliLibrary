@@ -1,6 +1,5 @@
 package com.github.rainmanwy.robotframework.sikulilib.utils;
 
-import com.github.rainmanwy.robotframework.sikulilib.exceptions.ScreenOperationException;
 import com.github.rainmanwy.robotframework.sikulilib.keywords.AppiumKeywords;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
@@ -10,8 +9,6 @@ import io.appium.java_client.android.nativekey.KeyEvent;
 import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -139,7 +136,7 @@ public class AppiumHelper {
     public void appiumClearText1(AppiumDriver appiumDriver, String text, boolean exactMatch) {
         String locator = locator(text, exactMatch);
         WebDriverWait wait = new WebDriverWait(appiumDriver, Duration.ofSeconds(10));
-        WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated( AppiumBy.xpath(locator)));
+        WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(AppiumBy.xpath(locator)));
         el.clear();
     }
 
@@ -154,7 +151,7 @@ public class AppiumHelper {
     public void appiumClickText(AppiumDriver appiumDriver, String textClick, boolean exactMatch) {
         try {
             String locator = locator(textClick, exactMatch);
-            appiumDriver.findElement( AppiumBy.xpath(locator)).click();
+            appiumDriver.findElement(AppiumBy.xpath(locator)).click();
         } catch (Exception e) {
             throw new ScreenshotException("Cannot find element has " + textClick);
         }
@@ -214,7 +211,7 @@ public class AppiumHelper {
         String locator = locator(text, false);
         while (!isTextVisible) {
             try {
-                WebElement element = appiumDriver.findElement( AppiumBy.xpath(locator));
+                WebElement element = appiumDriver.findElement(AppiumBy.xpath(locator));
                 if (element != null && element.isDisplayed()) {
                     isTextVisible = true;
                 }
@@ -444,7 +441,7 @@ public class AppiumHelper {
         try {
             String xpath = locator(text, exactMatch);
             WebDriverWait wait = new WebDriverWait(appiumDriver, Duration.ofSeconds(time));
-            wait.until(ExpectedConditions.visibilityOfElementLocated( AppiumBy.xpath(xpath) ));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(AppiumBy.xpath(xpath)));
         } catch (Exception e) {
             throw new ScreenshotException("Timed out waiting for page to contain text: " + text);
         }
@@ -479,7 +476,7 @@ public class AppiumHelper {
         try {
             String xpath = locator(text, false);
             WebDriverWait wait = new WebDriverWait(appiumDriver, Duration.ofSeconds(time));
-            wait.until(ExpectedConditions.invisibilityOfElementLocated( AppiumBy.xpath(xpath) ));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(AppiumBy.xpath(xpath)));
         } catch (Exception e) {
             throw new ScreenshotException("Timed out waiting for page to contain text: " + text);
         }
@@ -490,6 +487,66 @@ public class AppiumHelper {
         org.openqa.selenium.interactions.Sequence clickPosition = new org.openqa.selenium.interactions.Sequence(finger, 1);
         clickPosition.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), x, y)).addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())).addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         appiumDriver.perform(Arrays.asList(clickPosition));
+    }
+
+    public void tapElement(AppiumDriver appiumDriver, WebElement element) {
+        PointerInput finger = new PointerInput(org.openqa.selenium.interactions.PointerInput.Kind.TOUCH, "finger");
+        org.openqa.selenium.interactions.Sequence clickPosition = new org.openqa.selenium.interactions.Sequence(finger, 1);
+        clickPosition.addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), element.getLocation().x, element.getLocation().y)).addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())).addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        appiumDriver.perform(Arrays.asList(clickPosition));
+    }
+
+    public void datePicker(AppiumDriver appiumDriver, String date, String month, String year) throws InterruptedException {
+        if (AppiumKeywords.platform.equalsIgnoreCase("iOS")) {
+
+            WebElement yearEl = appiumDriver.findElement(AppiumBy.xpath("//XCUIElementTypeOther[@name='Select date']/XCUIElementTypeDatePicker/XCUIElementTypePicker/XCUIElementTypePickerWheel[3]"));
+            yearEl.clear();
+            yearEl.sendKeys(year);
+
+            WebElement monEl = appiumDriver.findElement(AppiumBy.xpath("//XCUIElementTypeOther[@name='Select date']/XCUIElementTypeDatePicker/XCUIElementTypePicker/XCUIElementTypePickerWheel[1]"));
+            monEl.clear();
+            monEl.sendKeys(month);
+
+            WebElement dateEl = appiumDriver.findElement(AppiumBy.xpath("//XCUIElementTypeOther[@name='Select date']/XCUIElementTypeDatePicker/XCUIElementTypePicker/XCUIElementTypePickerWheel[2]"));
+            dateEl.clear();
+            dateEl.sendKeys(date);
+
+        } else if (AppiumKeywords.platform.equalsIgnoreCase("Android")) {
+
+            for (int i = 0; i < 100; i++) {
+                if (!findElements(appiumDriver, "xpath=//android.widget.NumberPicker[3]//android.widget.EditText").getText().equalsIgnoreCase(year)) {
+                    WebElement preYear = appiumDriver.findElement(AppiumBy.xpath("//android.widget.NumberPicker[3]/android.widget.Button"));
+                    tapElement(appiumDriver, preYear);
+                } else {
+                    break;
+                }
+                Thread.sleep(1000);
+            }
+
+            for (int i = 0; i < 31; i++) {
+                if (!findElements(appiumDriver, "xpath=//android.widget.NumberPicker[2]/android.widget.EditText").getText().equalsIgnoreCase(date)) {
+                    WebElement nextDate = appiumDriver.findElement(AppiumBy.xpath("//android.widget.NumberPicker[2]/android.widget.Button[1]"));
+                    tapElement(appiumDriver, nextDate);
+                } else {
+                    break;
+                }
+                Thread.sleep(1000);
+            }
+
+            for (int i = 0; i < 12; i++) {
+                if (!findElements(appiumDriver, "xpath=//android.widget.NumberPicker[1]/android.widget.EditText").getText().equalsIgnoreCase(month)) {
+                    WebElement nextMonth = appiumDriver.findElement(AppiumBy.xpath("//android.widget.NumberPicker[1]/android.widget.Button[1]"));
+                    tapElement(appiumDriver, nextMonth);
+                } else {
+                    break;
+                }
+                Thread.sleep(1000);
+            }
+
+
+        } else {
+            System.out.println("Unsupported platform");
+        }
     }
 
 }

@@ -349,6 +349,11 @@ public class AppiumKeywords {
             int newX = pos.getX();
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
+
+            if ( colorOption > 0){
+                OCR.globalOptions().resetFontSetting();
+            }
+
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -823,6 +828,14 @@ public class AppiumKeywords {
     @ArgumentNames({"text"})
     public boolean isTextExistOnMobileScreen(String text) throws Exception {
         return helper.pageShouldContainText(driver, text);
+    }
+
+    @RobotKeyword("Pick Date"
+            + "\nExamples:"
+            + "\n| Pick Date | 10 | November | 2000 |")
+    @ArgumentNames({"date", "month", "year"})
+    public void pickDate(String date, String month, String year) throws Exception {
+        helper.datePicker(driver, date, month, year);
     }
 
 }
