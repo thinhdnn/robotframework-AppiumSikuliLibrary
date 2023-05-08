@@ -838,8 +838,16 @@ public class AppiumKeywords {
         helper.datePicker(driver, date, month, year);
     }
 
+    @RobotKeyword("Get Text From Mobile Element"
+            + "\nExamples:"
+            + "\n| Get Text From Mobile Element | locator |")
+    @ArgumentNames({"locator"})
+    public String getTextFromMobileElement(String locator) {
+        return helper.getTextFromMobileElement(driver, locator);
+    }
+
     @RobotKeyword("Quit Mobile Session")
-    public void quitMobileSession() throws Exception {
+    public void quiteMobileSession() {
         driver.quit();
     }
 

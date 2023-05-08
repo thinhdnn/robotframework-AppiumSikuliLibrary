@@ -33,7 +33,7 @@ public class AppiumHelper {
         for (Map.Entry<String, String> entry : capabilities.entrySet()) {
             caps.setCapability(entry.getKey(), entry.getValue());
         }
-        caps.setCapability("newCommandTimeout", 600000);
+        caps.setCapability("newCommandTimeout", 600);
 
         if (caps.getCapability("platformName").toString().equalsIgnoreCase("Android")) {
             AppiumKeywords.platform = "Android";
@@ -547,6 +547,11 @@ public class AppiumHelper {
         } else {
             System.out.println("Unsupported platform");
         }
+    }
+
+    public String getTextFromMobileElement(AppiumDriver appiumDriver, String locator){
+        String text = findElements(appiumDriver, locator).getText();
+        return text;
     }
 
 }
