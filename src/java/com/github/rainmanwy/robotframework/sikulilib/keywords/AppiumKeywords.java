@@ -838,4 +838,9 @@ public class AppiumKeywords {
         helper.datePicker(driver, date, month, year);
     }
 
+    @RobotKeyword("Quit Mobile Session")
+    public void quitMobileSession() throws Exception {
+        driver.quit();
+    }
+
 }
