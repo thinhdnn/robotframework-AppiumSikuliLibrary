@@ -13,9 +13,9 @@ with open(join(dirname(abspath(__file__)), 'target', 'src', 'AppiumSikuliLibrary
 DESCRIPTION = """
 Appium - Sikuli Robot Framework Library provide keywords for Robot Framework to test UI through Sikuli.
 
-Notes: SikuliLibrary.jar file is OS dependent. The version for Windows 64bit is included.
+Notes: AppiumSikuliLibrary.jar file is OS dependent. The version for Windows 64bit is included.
 If target OS is not Windows, please get source code from GITHUB, and use Maven to build
-SikuliLibrary.jar on target OS, and replace the jar file in 'lib' folder.
+AppiumSikuliLibrary.jar on target OS, and replace the jar file in 'lib' folder.
 """[1:-1]
 CLASSIFIERS = """
 Operating System :: OS Independent

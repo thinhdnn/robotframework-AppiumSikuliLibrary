@@ -33,8 +33,7 @@ public class AppiumHelper {
         for (Map.Entry<String, String> entry : capabilities.entrySet()) {
             caps.setCapability(entry.getKey(), entry.getValue());
         }
-        caps.setCapability("newCommandTimeout", 600);
-
+        caps.setCapability("newCommandTimeout", 60000);
         if (caps.getCapability("platformName").toString().equalsIgnoreCase("Android")) {
             AppiumKeywords.platform = "Android";
             return new AndroidDriver(hubUrl, caps);

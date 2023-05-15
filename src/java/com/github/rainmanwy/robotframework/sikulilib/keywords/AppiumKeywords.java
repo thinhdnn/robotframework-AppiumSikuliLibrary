@@ -847,7 +847,7 @@ public class AppiumKeywords {
     }
 
     @RobotKeyword("Quit Mobile Session")
-    public void quiteMobileSession() {
+    public void quitMobileSession() {
         driver.quit();
     }
 
