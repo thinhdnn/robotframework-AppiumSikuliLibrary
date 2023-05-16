@@ -419,7 +419,7 @@ public class AppiumKeywords {
             if (platform.equalsIgnoreCase("Android")) {
                 ((AndroidDriver) driver).longPressKey(new KeyEvent(AndroidKey.DEL));
             } else if (platform.equalsIgnoreCase("iOS")) {
-                helper.iosLongDelete(driver);
+                helper.iosLongDelete(driver, textTap.length());
             } else {
                 System.out.println("Unsupported platform");
             }
@@ -628,7 +628,7 @@ public class AppiumKeywords {
     }
 
     @RobotKeyword("Close Mobile Application")
-    public void mobileCloseCurrentApplication() throws Exception {
+    public void closeMobileApplication() throws Exception {
         helper.appiumCloseCurrentApp(driver);
     }
 
@@ -794,7 +794,7 @@ public class AppiumKeywords {
             + "\nExamples:"
             + "\n| Wait Mobile Page Contain Text | text | exactMatch=true | timeOut: default 10s")
     @ArgumentNames({"text", "exactMatch=true", "timeOut=10"})
-    public void waitMobilePageContainText(String text, boolean exactMatch, Integer timeOut) throws Exception {
+    public void waitMobilePageContainText(String text, boolean exactMatch,Integer timeOut) throws Exception {
         helper.waitUntilPageContainsText(driver, text, exactMatch, timeOut);
     }
 

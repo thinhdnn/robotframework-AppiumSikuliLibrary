@@ -177,7 +177,7 @@ public class AppiumHelper {
     }
 
     public void appiumCloseCurrentApp(AppiumDriver appiumDriver) {
-        appiumDriver.quit();
+        appiumDriver.close();
     }
 
     public void appiumGoBack(AppiumDriver appiumDriver) {
@@ -395,8 +395,8 @@ public class AppiumHelper {
         }
     }
 
-    public void iosLongDelete(AppiumDriver appiumDriver) {
-        for (int i = 0; i < 20; i++) {
+    public void iosLongDelete(AppiumDriver appiumDriver, int len) {
+        for (int i = 0; i < len + 2; i++) {
             appiumDriver.findElement(AppiumBy.accessibilityId("delete")).click();
         }
     }
