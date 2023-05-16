@@ -851,4 +851,9 @@ public class AppiumKeywords {
         driver.quit();
     }
 
+    @RobotKeyword("Get Current Mobile Session")
+    public String getMobileSession() {
+        return driver.getSessionId().toString();
+    }
+
 }
