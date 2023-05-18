@@ -478,6 +478,9 @@ public class AppiumKeywords {
         screen.setImage(getScreenshot());
         try {
             Match match = region.findText(textTap);
+            if (colorOption > 0) {
+                OCR.globalOptions().resetFontSetting();
+            }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
@@ -485,9 +488,6 @@ public class AppiumKeywords {
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
             driver.switchTo().activeElement().sendKeys(textInput);
-            if (colorOption > 0) {
-                OCR.globalOptions().resetFontSetting();
-            }
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
