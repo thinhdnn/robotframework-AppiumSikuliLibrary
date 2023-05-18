@@ -316,10 +316,8 @@ public class AppiumKeywords {
             int newX = pos.getX();
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
-
             Thread.sleep(2000);
             waitText(text, Double.toString(this.timeOut));
-
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -343,17 +341,15 @@ public class AppiumKeywords {
         screen.setImage(getScreenshot());
         try {
             Match match = region.findWord(text);
+            if ( colorOption > 0){
+                OCR.globalOptions().resetFontSetting();
+            }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
             int newX = pos.getX();
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
-
-            if ( colorOption > 0){
-                OCR.globalOptions().resetFontSetting();
-            }
-
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -377,6 +373,9 @@ public class AppiumKeywords {
         screen.setImage(getScreenshot());
         try {
             Match match = region.findWord(textTap);
+            if (colorOption > 0) {
+                OCR.globalOptions().resetFontSetting();
+            }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
@@ -384,9 +383,6 @@ public class AppiumKeywords {
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
             driver.switchTo().activeElement().sendKeys(textInput);
-            if (colorOption > 0) {
-                OCR.globalOptions().resetFontSetting();
-            }
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -410,6 +406,9 @@ public class AppiumKeywords {
         screen.setImage(getScreenshot());
         try {
             Match match = region.findWord(textTap);
+            if (colorOption > 0) {
+                OCR.globalOptions().resetFontSetting();
+            }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
@@ -423,9 +422,6 @@ public class AppiumKeywords {
             } else {
                 System.out.println("Unsupported platform");
             }
-            if (colorOption > 0) {
-                OCR.globalOptions().resetFontSetting();
-            }
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -436,12 +432,22 @@ public class AppiumKeywords {
     @RobotKeyword("Tap Text On Mobile"
             + "\n\nTap an Tap Text On Mobile  with similarity and offset."
             + "\nExamples:"
-            + "\n| Tap Text On Mobile | Hello World |")
-    @ArgumentNames({"text"})
-    public int[] tapTextOnMobile(String text) throws Exception {
+            + "\n| Tap Text On Mobile | Hello World | Text Color : 0 (default) 1 (light white) 2 (light gray)")
+    @ArgumentNames({"text", "colorOption=0"})
+    public int[] tapTextOnMobile(String text, Integer colorOption) throws Exception {
+        if (colorOption == 2) {
+            OCR.globalOptions().grayFont();
+        } else if (colorOption == 1) {
+            OCR.globalOptions().lightFont();
+        } else {
+            System.out.println("Default");
+        }
         screen.setImage(getScreenshot());
         try {
             Match match = region.findText(text);
+            if (colorOption > 0) {
+                OCR.globalOptions().resetFontSetting();
+            }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
@@ -453,6 +459,7 @@ public class AppiumKeywords {
             capture();
             throw new ScreenOperationException("Tap " + text + " failed" + e.getMessage(), e);
         }
+
     }
 
     @RobotKeyword("Tap Text And Send Text On Mobile"
@@ -526,7 +533,6 @@ public class AppiumKeywords {
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
             Thread.sleep(2000);
-
             waitBest(checks.split(","), 10);
 
         } catch (Exception e) {
@@ -550,7 +556,6 @@ public class AppiumKeywords {
             int newY = pos.getY();
             helper.tapOnCoordinates(driver, newX, newY);
             Thread.sleep(2000);
-
             waitBest(checks.split(","), 10);
 
         } catch (Exception e) {
