@@ -118,4 +118,12 @@ public class SettingsKeywords {
     public void resetFontSetting() {
         OCR.globalOptions().resetFontSetting();
     }
+
+    @RobotKeyword("Set Tesseract Path"
+            + "\nExamples:"
+            + "\n| Set Tesseract Path | Path Trained Data |")
+    @ArgumentNames({"path"})
+    public void setTesseractPath(String path) {
+        OCR.globalOptions().dataPath();
+    }
 }
