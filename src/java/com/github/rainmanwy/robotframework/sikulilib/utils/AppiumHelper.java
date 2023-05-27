@@ -128,7 +128,7 @@ public class AppiumHelper {
         }
     }
 
-    public void appiumInputText(AppiumDriver appiumDriver, String locator, String text) {
+    public void appiumInputText(AppiumDriver appiumDriver, String locator, String text) throws Exception {
         findElements(appiumDriver, locator).sendKeys(text);
     }
 
@@ -139,8 +139,21 @@ public class AppiumHelper {
         el.clear();
     }
 
-    public void appiumClearText(AppiumDriver appiumDriver, String locator) {
+    public void appiumClearText(AppiumDriver appiumDriver, String locator) throws Exception {
         findElements(appiumDriver, locator).clear();
+    }
+
+    public void clearAfterTap(AppiumDriver appiumDriver) {
+        clearAfterTap(appiumDriver, null);
+    }
+    public void clearAfterTap(AppiumDriver appiumDriver, String textTap) {
+        if (AppiumKeywords.platform.equalsIgnoreCase("Android")) {
+            ((AndroidDriver) appiumDriver).longPressKey(new KeyEvent(AndroidKey.DEL));
+        } else if (AppiumKeywords.platform.equalsIgnoreCase("iOS")) {
+            iosLongDelete(appiumDriver, textTap != null ? textTap.length() : 20);
+        } else {
+            System.out.println("Unsupported platform");
+        }
     }
 
     public void appiumClickElement(AppiumDriver appiumDriver, String locator) {

@@ -4,15 +4,10 @@ import com.github.rainmanwy.robotframework.sikulilib.exceptions.ScreenOperationE
 import com.github.rainmanwy.robotframework.sikulilib.exceptions.TimeoutException;
 import com.github.rainmanwy.robotframework.sikulilib.utils.AppiumHelper;
 import com.github.rainmanwy.robotframework.sikulilib.utils.CaptureFolder;
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.nativekey.AndroidKey;
-import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.android.nativekey.KeyEventMetaModifier;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebElement;
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
@@ -25,24 +20,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 
 @RobotKeywords
 public class AppiumKeywords {
 
-    private static double DEFAULT_TIMEOUT = 3.0;
+    private final static double DEFAULT_TIMEOUT = 5.0;
     private double timeOut;
     private long stepWait = 2;
-
-    private boolean clearText = false;
-
     public static AppiumDriver driver = null;
-    private static ImageAsScreen screen = new ImageAsScreen();
+    private final static ImageAsScreen screen = new ImageAsScreen();
     private static Region region;
 
-    private Boolean isCaptureMatchedImage = true;
+    private final Boolean isCaptureMatchedImage = true;
 
     public AppiumKeywords() {
         timeOut = DEFAULT_TIMEOUT;
@@ -79,31 +70,31 @@ public class AppiumKeywords {
         return pattern;
     }
 
-    private Match wait(String image, String timeout) throws TimeoutException {
+    private Match wait(String image, Double timeout) throws TimeoutException {
         try {
             screen.setImage(getScreenshot());
-            Match match = region.wait(getPattern(image), Double.parseDouble(timeout));
+            Match match = region.wait(getPattern(image), timeout);
             capture(match);
             return match;
-        } catch (FindFailed e) {
+        } catch (Exception e) {
             capture(region);
             throw new TimeoutException("Timeout happened, could not find " + getPattern(image).toString(), e);
         }
     }
 
-    private Match waitText(String text, String timeout) throws TimeoutException {
+    private Match waitText(String text, Double timeout) throws TimeoutException {
         try {
             screen.setImage(getScreenshot());
-            Match match = region.waitText(text, Double.parseDouble(timeout));
+            Match match = region.waitText(text, timeout);
             capture(match);
             return match;
-        } catch (FindFailed e) {
+        } catch (Exception e) {
             capture(region);
             throw new TimeoutException("Timeout happened, could not find " + text, e);
         }
     }
 
-    private Match waitBest(String[] images, Integer timeout) throws Exception {
+    private Match waitBest(String[] images, Double timeout) throws Exception {
         boolean isMatched = false;
         Match match = null;
         for (int i = 0; i < timeout; i++) {
@@ -114,7 +105,7 @@ public class AppiumKeywords {
                 isMatched = true;
                 break;
             } catch (Exception e) {
-
+                System.out.println("Skipped");
             }
         }
         if (isMatched) {
@@ -166,16 +157,12 @@ public class AppiumKeywords {
         return imagePath;
     }
 
-    public BufferedImage getScreenshot() {
+    public BufferedImage getScreenshot() throws IOException {
         File screenshotFile = driver.getScreenshotAs(OutputType.FILE);
-        try {
-            BufferedImage full = (ImageIO.read(screenshotFile));
-            widthRes = full.getWidth();
-            heightRes = full.getHeight();
-            return full;
-        } catch (IOException e) {
-        }
-        return null;
+        BufferedImage full = (ImageIO.read(screenshotFile));
+        widthRes = full.getWidth();
+        heightRes = full.getHeight();
+        return full;
     }
 
     private String capture() {
@@ -210,14 +197,6 @@ public class AppiumKeywords {
         driver.manage().timeouts().implicitlyWait(Long.parseLong(millisecond), TimeUnit.MILLISECONDS);
     }
 
-    @RobotKeyword("Clear Text Before"
-            + "\nExamples:"
-            + "\n| Clear Text Before | true or false |")
-    @ArgumentNames({"enable"})
-    public void clearTextBefore(boolean enable) {
-        this.clearText = enable;
-    }
-
     @RobotKeyword("Set Mobile Step Wait"
             + "\nExamples:"
             + "\n| Set Mobile Step Wait | 10 |")
@@ -234,7 +213,6 @@ public class AppiumKeywords {
     @ArgumentNames({"appiumUrl", "capabilities"})
     public void openMobileApplication(String appiumUrl, Map<String, String> capabilities) throws Exception {
         driver = helper.connect(appiumUrl, capabilities);
-
         widthDevice = driver.manage().window().getSize().getWidth();
         heightDevice = driver.manage().window().getSize().getHeight();
         getScreenshot();
@@ -242,11 +220,11 @@ public class AppiumKeywords {
         region = screen.newRegion(0, 0, widthRes, heightRes);
     }
 
-    @RobotKeyword("Configure Appium TimeOuts"
+    @RobotKeyword("Configure Appium Page TimeOuts"
             + "\nExamples:"
-            + "\n| Configure Appium TimeOuts | time |")
+            + "\n| Configure Appium Page TimeOuts | time |")
     @ArgumentNames({"time"})
-    public void configureAppiumTimeOuts(int time) throws Exception {
+    public void configureAppiumPageTimeOuts(int time) throws Exception {
         driver.manage().timeouts().pageLoadTimeout(time, TimeUnit.SECONDS);
     }
 
@@ -254,7 +232,7 @@ public class AppiumKeywords {
             + "\nExamples:"
             + "\n| Mobile Capture Screen | demo.png |")
     @ArgumentNames({"imagePath"})
-    public String captureMobileScreen(String imagePath) {
+    public String captureMobileScreen(String imagePath) throws IOException {
         screen.setImage(getScreenshot());
         ScreenImage image = AppiumKeywords.getScreen().capture();
         return saveImage(image, imagePath);
@@ -266,14 +244,11 @@ public class AppiumKeywords {
             + "\n| Mobile Tap On Image | hello.png |")
     @ArgumentNames({"image"})
     public int[] tapOnMobileImage(String image) throws Exception {
-        Match match = wait(image, Double.toString(this.timeOut));
+        Match match = wait(image, this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -287,14 +262,11 @@ public class AppiumKeywords {
             + "\n| Mobile Tap On Best Image | hello.png |")
     @ArgumentNames({"images"})
     public int[] tapOnBestMobileImage(String images) throws Exception {
-        Match match = waitBest(images.split(","), 10);
+        Match match = waitBest(images.split(","), this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -308,16 +280,12 @@ public class AppiumKeywords {
             + "\n| Mobile Tap On Best Image | hello.png | text |")
     @ArgumentNames({"images", "text"})
     public int[] tapOnBestMobileImageAndWaitText(String images, String text) throws Exception {
-        Match match = waitBest(images.split(","), 10);
+        Match match = waitBest(images.split(","), this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            Thread.sleep(2000);
-            waitText(text, Double.toString(this.timeOut));
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            waitText(text, this.timeOut);
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -346,10 +314,7 @@ public class AppiumKeywords {
             }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -378,11 +343,9 @@ public class AppiumKeywords {
             }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            driver.switchTo().activeElement().sendKeys(textInput);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            Thread.sleep(stepWait * 1000);
+            typeTextOnMobile(textInput);
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -412,16 +375,8 @@ public class AppiumKeywords {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
             Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            if (platform.equalsIgnoreCase("Android")) {
-                ((AndroidDriver) driver).longPressKey(new KeyEvent(AndroidKey.DEL));
-            } else if (platform.equalsIgnoreCase("iOS")) {
-                helper.iosLongDelete(driver, textTap.length());
-            } else {
-                System.out.println("Unsupported platform");
-            }
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            helper.clearAfterTap(driver, textTap);
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -450,10 +405,7 @@ public class AppiumKeywords {
             }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -462,12 +414,12 @@ public class AppiumKeywords {
 
     }
 
-    @RobotKeyword("Tap Text And Send Text On Mobile"
-            + "\n\nTap an Tap Text And Send Text On Mobile  with similarity and offset."
+    @RobotKeyword("Tap Text And Type Text On Mobile"
+            + "\n\nTap an Tap Text And Type Text On Mobile  with similarity and offset."
             + "\nExamples:"
-            + "\n| Tap Text And Send Text On Mobile | Hello World | Text | Text Color : 0 (default) 1 (light white) 2 (light gray)")
+            + "\n| Tap Text And Type Text On Mobile | Hello World | Text | Text Color : 0 (default) 1 (light white) 2 (light gray)")
     @ArgumentNames({"textTap", "textInput", "colorOption=0"})
-    public int[] tapTextAndSendTextOnMobile(String textTap, String textInput, Integer colorOption) throws Exception {
+    public int[] tapTextAndTypeTextOnMobile(String textTap, String textInput, Integer colorOption) throws Exception {
         if (colorOption == 2) {
             OCR.globalOptions().grayFont();
         } else if (colorOption == 1) {
@@ -483,11 +435,9 @@ public class AppiumKeywords {
             }
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            driver.switchTo().activeElement().sendKeys(textInput);
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            Thread.sleep(stepWait * 1000);
+            typeTextOnMobile(textInput);
             return regionFromMatch(match);
         } catch (Exception e) {
             capture();
@@ -501,17 +451,12 @@ public class AppiumKeywords {
             + "\n| Mobile Tap Image And Wait Image | tap.png | wait.png")
     @ArgumentNames({"image", "check"})
     public void tapMobileImageAndWaitImage(String image, String check) throws Exception {
-        Match match = wait(image, Double.toString(this.timeOut));
+        Match match = wait(image, this.timeOut);
         try {
             Location center = match.getCenter();
-            //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            Thread.sleep(2000);
-            wait(check, Double.toString(this.timeOut));
-
+            //Ex : 335 - 410 / 67 - 8
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            wait(check, this.timeOut);
         } catch (Exception e) {
             capture();
             throw new ScreenOperationException("Tap " + image + " wait " + check + " failed" + e.getMessage(), e);
@@ -524,17 +469,12 @@ public class AppiumKeywords {
             + "\n| Mobile Tap Image And Wait Best Image | tap.png | wait.png")
     @ArgumentNames({"image", "checks"})
     public void tapMobileImageAndWaitBestImage(String image, String checks) throws Exception {
-        Match match = wait(image, Double.toString(this.timeOut));
+        Match match = wait(image, this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            Thread.sleep(2000);
-            waitBest(checks.split(","), 10);
-
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            waitBest(checks.split(","), this.timeOut);
         } catch (Exception e) {
             capture();
             throw new ScreenOperationException("Tap " + image + " wait best image failed" + e.getMessage(), e);
@@ -547,17 +487,12 @@ public class AppiumKeywords {
             + "\n| Mobile Tap On Best Image And Wait Best Image | tap.png | wait.png")
     @ArgumentNames({"images", "checks"})
     public void tapOnBestMobileImageAndWaitBestImage(String images, String checks) throws Exception {
-        Match match = waitBest(images.split(","), 10);
+        Match match = waitBest(images.split(","), this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            Thread.sleep(2000);
-            waitBest(checks.split(","), 10);
-
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            waitBest(checks.split(","), this.timeOut);
         } catch (Exception e) {
             capture();
             throw new ScreenOperationException("Tap matched image and wait best image failed" + e.getMessage(), e);
@@ -570,17 +505,12 @@ public class AppiumKeywords {
             + "\n| Mobile Tap Image And Wait Text | tap.png | text")
     @ArgumentNames({"image", "check"})
     public void tapMobileImageAndWaitText(String image, String text) throws Exception {
-        Match match = wait(image, Double.toString(this.timeOut));
+        Match match = wait(image, this.timeOut);
         try {
             Location center = match.getCenter();
             //Ex : 335 - 410 / 67 - 85
-            Location pos = dpi(center);
-            int newX = pos.getX();
-            int newY = pos.getY();
-            helper.tapOnCoordinates(driver, newX, newY);
-            Thread.sleep(2000);
-            waitText(text, Double.toString(this.timeOut));
-
+            helper.tapOnCoordinates(driver, dpi(center).getX(), dpi(center).getY());
+            waitText(text, this.timeOut);
         } catch (Exception e) {
             capture();
             throw new ScreenOperationException("Tap " + image + " wait " + text + " failed" + e.getMessage(), e);
@@ -815,7 +745,7 @@ public class AppiumKeywords {
             + "\nExamples:"
             + "\n| Wait Until Mobile Screen Contain | image | timeOut: default 10s")
     @ArgumentNames({"image", "timeOut"})
-    public void waitUntilMobileScreenContain(String image, String timeOut) throws TimeoutException {
+    public void waitUntilMobileScreenContain(String image, Double timeOut) throws TimeoutException {
         wait(image, timeOut);
     }
 
@@ -823,7 +753,7 @@ public class AppiumKeywords {
             + "\nExamples:"
             + "\n| Wait Until Mobile Screen Contain Any | images | timeOut: default 10s")
     @ArgumentNames({"images", "timeOut=10"})
-    public void waitUntilMobileScreenContainAny(String images, Integer timeOut) throws Exception {
+    public void waitUntilMobileScreenContainAny(String images, Double timeOut) throws Exception {
         waitBest(images.split(","), timeOut);
     }
 
