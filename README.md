@@ -15,3 +15,6 @@ Before using this library, please check [doc of sikulix](https://sikulix-2014.re
 
 |  AppiumSikuliLibrary          |  sikulixapi   	|   Java  |
 |  master                 		|  2.0.6-SNAPSHOT   |   11    |
+
+## Libdoc
+To view the Libdoc HTML file, [click here](./doc/AppiumSikuliLibrary.html).
