@@ -20,7 +20,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sikulix</groupId>
+            <groupId>io.github.thinhdnn</groupId>
             <artifactId>sikulixapi</artifactId>
             <version>2.0.6-SNAPSHOT</version>
         </dependency>

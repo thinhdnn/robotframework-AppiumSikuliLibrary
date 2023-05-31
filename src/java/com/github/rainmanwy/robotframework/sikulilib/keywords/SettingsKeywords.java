@@ -126,4 +126,12 @@ public class SettingsKeywords {
     public void setTesseractPath(String path) {
         OCR.globalOptions().dataPath();
     }
+
+    @RobotKeyword("Set PSM"
+            + "\nExamples:"
+            + "\n| Set PSM | 1 - 13 |")
+    @ArgumentNames({"psm"})
+    public void setPsm(Integer psm) {
+        OCR.globalOptions().psm(psm);
+    }
 }

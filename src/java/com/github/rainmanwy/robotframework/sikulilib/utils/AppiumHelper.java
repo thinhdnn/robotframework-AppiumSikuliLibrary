@@ -485,13 +485,9 @@ public class AppiumHelper {
 
 
     public void waitUntilPageDoesNotContain(AppiumDriver appiumDriver, String text, Integer time) {
-        try {
-            String xpath = locator(text, false);
-            WebDriverWait wait = new WebDriverWait(appiumDriver, Duration.ofSeconds(time));
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(AppiumBy.xpath(xpath)));
-        } catch (Exception e) {
-            throw new ScreenshotException("Timed out waiting for page to contain text: " + text);
-        }
+        String xpath = locator(text, false);
+        WebDriverWait wait = new WebDriverWait(appiumDriver, Duration.ofSeconds(time));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(AppiumBy.xpath(xpath)));
     }
 
     public void tapOnCoordinates(AppiumDriver appiumDriver, int x, int y) {

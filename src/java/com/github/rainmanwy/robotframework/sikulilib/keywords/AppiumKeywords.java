@@ -8,6 +8,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.remote.ScreenshotException;
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
@@ -70,26 +71,26 @@ public class AppiumKeywords {
         return pattern;
     }
 
-    private Match wait(String image, Double timeout) throws TimeoutException {
+    private Match wait(String image, Double timeout) throws Exception {
         try {
             screen.setImage(getScreenshot());
             Match match = region.wait(getPattern(image), timeout);
             capture(match);
             return match;
         } catch (Exception e) {
-            capture(region);
+            capture();
             throw new TimeoutException("Timeout happened, could not find " + getPattern(image).toString(), e);
         }
     }
 
-    private Match waitText(String text, Double timeout) throws TimeoutException {
+    private Match waitText(String text, Double timeout) throws Exception {
         try {
             screen.setImage(getScreenshot());
             Match match = region.waitText(text, timeout);
             capture(match);
             return match;
         } catch (Exception e) {
-            capture(region);
+            capture();
             throw new TimeoutException("Timeout happened, could not find " + text, e);
         }
     }
@@ -111,7 +112,7 @@ public class AppiumKeywords {
         if (isMatched) {
             return match;
         } else {
-            capture(region);
+            capture();
             throw new ScreenOperationException("Timeout happened, could not find any best");
         }
 
@@ -165,7 +166,8 @@ public class AppiumKeywords {
         return full;
     }
 
-    private String capture() {
+    private String capture() throws IOException {
+        screen.setImage(getScreenshot());
         ScreenImage image = screen.capture(region);
         return saveImage(image);
     }
@@ -666,6 +668,7 @@ public class AppiumKeywords {
     public void mobileElementShouldContainText(String locator, String text) throws Exception {
         boolean result = helper.elementShouldContainText(driver, locator, text);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile element should contain text.");
         }
     }
@@ -677,6 +680,7 @@ public class AppiumKeywords {
     public void mobileElementShouldNotContainText(String locator, String text) throws Exception {
         boolean result = helper.elementShouldNotContainText(driver, locator, text);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile element should not contain text.");
         }
     }
@@ -688,6 +692,7 @@ public class AppiumKeywords {
     public void mobileElementShouldBe(String locator, String text) throws Exception {
         boolean result = helper.elementTextShouldBe(driver, locator, text);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile element should be.");
         }
     }
@@ -699,6 +704,7 @@ public class AppiumKeywords {
     public void mobilePageShouldContainElement(String locator) throws Exception {
         boolean result = helper.pageShouldContainElement(driver, locator);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile page should contain element.");
         }
     }
@@ -710,6 +716,7 @@ public class AppiumKeywords {
     public void mobilePageShouldContainText(String text) throws Exception {
         boolean result = helper.pageShouldContainText(driver, text);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile page should contain text.");
         }
     }
@@ -721,6 +728,7 @@ public class AppiumKeywords {
     public void mobilePageShouldNotContainText(String text) throws Exception {
         boolean result = helper.pageShouldNotContainText(driver, text);
         if (result != true) {
+            capture();
             throw new Exception("Failed to check mobile page should not contain text.");
         }
     }
@@ -737,15 +745,21 @@ public class AppiumKeywords {
             + "\nExamples:"
             + "\n| Wait Mobile Page Not Contain Text | text | timeOut: default 10s")
     @ArgumentNames({"text", "timeOut=10"})
-    public void waitMobilePageNotContainText(String text, Integer timeOut) {
-        helper.waitUntilPageDoesNotContain(driver, text, timeOut);
+    public void waitMobilePageNotContainText(String text, Integer timeOut) throws Exception {
+        try{
+            helper.waitUntilPageDoesNotContain(driver, text, timeOut);
+        }
+        catch (Exception ex){
+            capture();
+            throw new ScreenshotException("Timed out waiting for page to contain text: " + text);
+        }
     }
 
     @RobotKeyword("Wait Until Mobile Screen Contain"
             + "\nExamples:"
             + "\n| Wait Until Mobile Screen Contain | image | timeOut: default 10s")
     @ArgumentNames({"image", "timeOut"})
-    public void waitUntilMobileScreenContain(String image, Double timeOut) throws TimeoutException {
+    public void waitUntilMobileScreenContain(String image, Double timeOut) throws Exception {
         wait(image, timeOut);
     }
 
@@ -765,6 +779,7 @@ public class AppiumKeywords {
         return helper.pageShouldContainText(driver, text);
     }
 
+    @Deprecated
     @RobotKeyword("Pick Date"
             + "\nExamples:"
             + "\n| Pick Date | 10 | November | 2000 |")
