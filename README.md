@@ -10,8 +10,9 @@ This library supports python 3.x
 As this library is depended with sikulixapi, below table describe the mapping between SikuliLibrary version and sikulixapi version.
 Before using this library, please check [doc of sikulix](https://sikulix-2014.readthedocs.io/en/latest/index.html), and make sure the environment satisfy the requirement of sikulix.
 
-|  AppiumSikuliLibrary          |  sikulixapi   	|   Java  |
-|  master                 		|  2.0.6-SNAPSHOT   |   11    |
+|   AppiumSikuliLibrary    |     sikulixapi   	     | Java |
+|:------------------------:|:----------------------:|:----:|
+|          master          |  2.0.6-SNAPSHOT   	 |  11  |
 
 ## Libdoc
 To view the Libdoc HTML file, [click here](./doc/AppiumSikuliLibrary.html).
