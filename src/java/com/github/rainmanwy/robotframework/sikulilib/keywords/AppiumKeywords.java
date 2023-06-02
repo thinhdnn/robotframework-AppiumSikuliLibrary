@@ -79,7 +79,7 @@ public class AppiumKeywords {
             return match;
         } catch (Exception e) {
             capture();
-            throw new TimeoutException("Timeout happened, could not find " + getPattern(image).toString(), e);
+            throw new ScreenOperationException("Timeout happened, could not find " + getPattern(image).toString(), e);
         }
     }
 
@@ -91,7 +91,7 @@ public class AppiumKeywords {
             return match;
         } catch (Exception e) {
             capture();
-            throw new TimeoutException("Timeout happened, could not find " + text, e);
+            throw new ScreenOperationException("Timeout happened, could not find " + text, e);
         }
     }
 
@@ -681,7 +681,7 @@ public class AppiumKeywords {
         boolean result = helper.elementShouldNotContainText(driver, locator, text);
         if (result != true) {
             capture();
-            throw new Exception("Failed to check mobile element should not contain text.");
+            throw new ScreenOperationException("Failed to check mobile element should not contain text.");
         }
     }
 
@@ -693,7 +693,7 @@ public class AppiumKeywords {
         boolean result = helper.elementTextShouldBe(driver, locator, text);
         if (result != true) {
             capture();
-            throw new Exception("Failed to check mobile element should be.");
+            throw new ScreenOperationException("Failed to check mobile element should be.");
         }
     }
 
@@ -705,7 +705,7 @@ public class AppiumKeywords {
         boolean result = helper.pageShouldContainElement(driver, locator);
         if (result != true) {
             capture();
-            throw new Exception("Failed to check mobile page should contain element.");
+            throw new ScreenOperationException("Failed to check mobile page should contain element.");
         }
     }
 
@@ -717,7 +717,7 @@ public class AppiumKeywords {
         boolean result = helper.pageShouldContainText(driver, text);
         if (result != true) {
             capture();
-            throw new Exception("Failed to check mobile page should contain text.");
+            throw new ScreenOperationException("Failed to check mobile page should contain text.");
         }
     }
 
@@ -729,7 +729,7 @@ public class AppiumKeywords {
         boolean result = helper.pageShouldNotContainText(driver, text);
         if (result != true) {
             capture();
-            throw new Exception("Failed to check mobile page should not contain text.");
+            throw new ScreenOperationException("Failed to check mobile page should not contain text.");
         }
     }
 
@@ -751,7 +751,7 @@ public class AppiumKeywords {
         }
         catch (Exception ex){
             capture();
-            throw new ScreenshotException("Timed out waiting for page to contain text: " + text);
+            throw new ScreenOperationException("Timed out waiting for page to contain text: " + text);
         }
     }
 
