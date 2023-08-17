@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.*;
 
 
-
+import org.openqa.selenium.remote.ScreenshotException;
 import org.robotframework.javalib.annotation.ArgumentNames;
 import org.robotframework.javalib.annotation.RobotKeyword;
 import org.robotframework.javalib.annotation.RobotKeywords;
@@ -642,7 +642,7 @@ public class ScreenKeywords {
     }
 
     @RobotKeyword("Press special key"
-            + "\n Presses a special keyboard key."
+            + "\n\n Presses a special keyboard key."
             + "\n\n For a list of possible Keys view docs for org.sikuli.script.Key ."
             + "\n\n Examples:"
             + "\n | Double Click | textFieldWithDefaultText.png | "
@@ -819,12 +819,12 @@ public class ScreenKeywords {
     @ArgumentNames({"steps", "image="})
     public void wheelUp(int steps, String image) throws Exception{
         wait(image, Double.toString(this.timeout));
-        region.wheel(getPattern(image), Button.WHEEL_UP, steps);
+        region.wheel(getPattern(image), Mouse.WHEEL_UP, steps);
     }
 
     @RobotKeywordOverload
     public void wheelUp(int steps) throws Exception{
-        region.wheel(Button.WHEEL_UP, steps);
+        region.wheel(Mouse.WHEEL_UP, steps);
     }
 
     @RobotKeyword("Wheel down"
@@ -835,12 +835,12 @@ public class ScreenKeywords {
     @ArgumentNames({"steps", "image="})
     public void wheelDown(int steps, String image) throws Exception{
         wait(image, Double.toString(this.timeout));
-        region.wheel(getPattern(image), Button.WHEEL_DOWN, steps);
+        region.wheel(getPattern(image), Mouse.WHEEL_DOWN, steps);
     }
 
     @RobotKeywordOverload
     public void wheelDown(int steps) throws Exception{
-        region.wheel(Button.WHEEL_DOWN, steps);
+        region.wheel(Mouse.WHEEL_DOWN, steps);
     }
 
     @RobotKeywordOverload
@@ -1448,5 +1448,107 @@ public class ScreenKeywords {
         String fileName = file.getName();
         System.out.println("*HTML* <img src='" + CaptureFolder.getInstance().getSubFolder() + "/" + fileName + "'/>");
         return imagePath;
+    }
+
+    @RobotKeyword("Wait until screen contain and click"
+            + "\n Wait until image shown in screen and click to the image")
+    @ArgumentNames({"image", "timeout"})
+    public int[] waitUntilScreenContainAndClick(String image, String timeout) throws TimeoutException, ScreenOperationException {
+        Match match = wait(image, timeout);
+        Location center = match.getCenter();
+        try {
+            int newX = center.getX();
+            int newY = center.getY();
+            Location newLocation = new Location(newX, newY);
+            region.click(newLocation);
+        }
+        catch (FindFailed e) {
+            capture();
+            throw new ScreenOperationException("Click "+image+" failed"+e.getMessage(), e);
+        }
+
+        return regionFromMatch(match);
+    }
+
+
+    @RobotKeyword("Click And Press"
+            + "\n\n Click image and press key C_END."
+            + "\n\n For a list of possible Keys view docs for org.sikuli.script.Key ."
+            + "\n\n Examples:"
+            + "\n | Click And Press To End | textFieldWithDefaultText.png | ")
+    @ArgumentNames({"image","keyConstant"})
+    public void clickAndPress(String image, String specialCharName) throws ScreenOperationException, TimeoutException {
+        Match match = wait(image, Double.toString(this.timeout));
+        Location center = match.getCenter();
+        try {
+            int newX = center.getX();
+            int newY = center.getY();
+            Location newLocation = new Location(newX, newY);
+            region.click(newLocation);
+
+            Object key =  Key.class.getField(specialCharName).get(null);
+            region.type(key.toString());
+        }
+        catch (Exception e) {
+            capture();
+            throw new ScreenOperationException("Click and press end "+ image +" failed"+e.getMessage(), e);
+        }
+
+    }
+
+    @RobotKeyword("Is Screen Contain"
+            + "\n\n Check screen contain image"
+            + "\n\n Return: true | false")
+    @ArgumentNames({"image"})
+    public boolean isScreenContain(String image) {
+        Match match = find(image);
+        if (match == null) {
+            capture();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private Match waitBest(String[] images, Double timeout) throws Exception {
+        try {
+            Match match = region.waitBest(timeout, images);
+            capture(match);
+            return match;
+        }
+        catch(Exception e) {
+            capture(region);
+            throw new ScreenOperationException("Timeout happened, could not find any best", e);
+        }
+
+    }
+
+    @RobotKeyword("Wait Until Screen Contain Any"
+            + "\nExamples:"
+            + "\n| Wait Until Screen Contain Any | images | timeOut: default 10s")
+    @ArgumentNames({"images", "timeOut=10"})
+    public void waitUntilScreenContainAny(String images, Double timeout) throws Exception {
+        waitBest(images.split(","), timeout);
+    }
+
+    @RobotKeyword("Click Any"
+            + "\n\n Click any best image matched"
+            + "\n\n Examples:"
+            + "\n | Click Any | image1.png,image2.png,image3.png | timeout")
+    @ArgumentNames({"images", "timeout"})
+    public void clickAny(String images, Double timeout) throws Exception {
+        Match match = waitBest(images.split(","), timeout);
+        Location center = match.getCenter();
+        try {
+            int newX = center.getX();
+            int newY = center.getY();
+            Location newLocation = new Location(newX, newY);
+            region.click(newLocation);
+        }
+        catch (Exception e) {
+            capture();
+            throw new ScreenOperationException("Click best image failed "+e.getMessage(), e);
+        }
+
     }
 }
