@@ -68,7 +68,7 @@ jobs:
         pip install robotframework
 
     - name: Build package
-      uses: coactions/setup-xvfb@v1
+      uses: GabrielBB/xvfb-action@v1.6
       with:
           run: |
               mvn clean install
