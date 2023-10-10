@@ -68,7 +68,9 @@ jobs:
         pip install robotframework
         
     - name: Build package
-      run: mvn clean install
+      run: |
+          mvn clean install
+          python -m build
       
     #- name: Publish package
     #  uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
