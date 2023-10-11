@@ -1542,6 +1542,19 @@ public class ScreenKeywords {
             throw new ScreenOperationException("Screen should contain text: " + text);
         }
     }
+    @RobotKeyword("Is Text Exist On Screen"
+            + "\n\nIs Text Exist On Screen."
+            + "\nExamples:"
+            + "\n| Is Text Exist On Screen | Hello |")
+    @ArgumentNames({"text"})
+    public boolean isTextExistOnScreen(String text){
+        Match match = screen.findLine(text);
+        if (match == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     @RobotKeyword("Click Any"
             + "\n\n Click any best image matched"
             + "\n\n Examples:"
