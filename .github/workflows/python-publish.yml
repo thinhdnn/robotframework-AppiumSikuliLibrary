@@ -1,0 +1,85 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Upload Python Package
+
+on: 
+    workflow_dispatch:
+    release:
+      types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+      
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+      
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository ppa:alex-p/tesseract-ocr-devel
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          maven \
+          curl \
+          unzip \
+          python3 \
+          python3-pip \
+          libopencv4.5-java \
+          tesseract-ocr \
+          libtesseract-dev \
+          ca-certificates \
+          wget
+        sudo apt-get autoremove -y
+        sudo rm -rf /var/lib/apt/lists/*
+
+    - name: Create symbolic link for libopencv_java.so
+      run: sudo ln -s /usr/lib/jni/libopencv_java454.so /usr/lib/jni/libopencv_java.so
+
+    - name: Download and configure JDK 17
+      run: |
+        sudo curl -o temurin.tar.gz -L "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz"
+        sudo mkdir -p /usr/share/man/man1
+        sudo tar -xvf temurin.tar.gz --directory=/usr/local/
+        sudo rm temurin.tar.gz
+        sudo ln -sf /usr/local/jdk-17+35/bin/java /usr/bin/java
+        echo 'JAVA_HOME="/usr/local/jdk-17+35"' | sudo tee -a /etc/environment
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+        pip install robotframework
+
+    - name: Build package
+      uses: GabrielBB/xvfb-action@v1.6
+      with:
+          run: |
+              mvn clean install
+              python -m build
+      
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
