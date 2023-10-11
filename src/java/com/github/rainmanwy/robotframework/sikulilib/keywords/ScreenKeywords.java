@@ -1530,7 +1530,18 @@ public class ScreenKeywords {
     public void waitUntilScreenContainAny(String images, Double timeout) throws Exception {
         waitBest(images.split(","), timeout);
     }
-
+    @RobotKeyword("Screen Should Contain Text"
+            + "\n\nScreen Should Contain Text."
+            + "\nExamples:"
+            + "\n| Screen Should Contain Text | Hello |")
+    @ArgumentNames({"text"})
+    public void screenShouldContainText(String text) throws Exception{
+        Match match = screen.findLine(text);
+        if (match == null) {
+            capture();
+            throw new ScreenOperationException("Screen should contain text: " + text);
+        }
+    }
     @RobotKeyword("Click Any"
             + "\n\n Click any best image matched"
             + "\n\n Examples:"
